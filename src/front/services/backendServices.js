@@ -1,3 +1,5 @@
+import { Navigate } from "react-router-dom";
+
 export const login = async (user, navigate) => {
   const response = await fetch(
     `${import.meta.env.VITE_BACKEND_URL}/api/login`,
@@ -5,7 +7,7 @@ export const login = async (user, navigate) => {
       method: "POST",
       body: JSON.stringify(user),
       headers: {
-        "Content-Type": "aplication/json",
+        "Content-Type": "application/json",
       },
     },
   );
@@ -16,6 +18,26 @@ export const login = async (user, navigate) => {
   }
   localStorage.setItem("token", data.token);
   navigate("/private");
+};
+
+export const register = async (user) => {
+  const response = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/api/register`,
+    {
+      method: "POST",
+      body: JSON.stringify(user),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  const data = await response.json();
+  if (!response.ok) {
+    console.log("ERROR BACKEND:", data);
+    alert(data.error || data.msg || "Error en registro");
+    return;
+  }
+  return { ok: true };
 };
 
 export const privateCheck = async () => {
@@ -29,7 +51,7 @@ export const privateCheck = async () => {
   );
   const data = await response.json();
   if (!response.ok) {
-    return false
+    return false;
   }
   return data;
 };

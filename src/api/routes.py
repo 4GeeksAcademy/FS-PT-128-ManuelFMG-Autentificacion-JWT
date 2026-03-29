@@ -23,8 +23,8 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-@api.route("/signup", methods=["POST"])
-def signup():
+@api.route("/register", methods=["POST"])
+def register():
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
@@ -35,7 +35,7 @@ def signup():
     existing_user = db.session.execute(select(User).where(User.email == email)).scalar_one_or_none()
 
     if existing_user:
-        return jsonify({"Error": "User with this email already exist"}), 400
+        return jsonify({"error": "User with this email already exists"}), 400
     
     new_user = User(email = email)
     new_user.set_password(password)
@@ -49,9 +49,11 @@ def login():
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
+
     if not email or not password:
         return jsonify({"error": "email and password are required"}), 400
     user = db.session.execute(select(User).where(User.email == email)).scalar_one_or_none()
+    
     if user is None:
         return jsonify({"msg": "Invalid email or password"}), 400
     
